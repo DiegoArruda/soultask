@@ -10,7 +10,10 @@ app.use(express.json());
 //Config do db
 mongoose.connect(process.env.MONGODB_URL);
 
-const rotaTarefas = require("./routes/tarefa");
+const rotaTarefas = require("./routes/tarefas");
+const rotaProdutos = require("./routes/produtos");
+app.use(rotaTarefas);
+app.use(rotaProdutos);
 
 //Listen
 app.listen(3000, () => {
