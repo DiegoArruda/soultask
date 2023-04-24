@@ -1,0 +1,102 @@
+{
+  "info": {
+    "_postman_id": "ce3e9a5c-4224-41e5-9141-525a7dc9ff69",
+    "name": "soultask-server",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Inserir Tarefa",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"titulo\": \"Ir na academia\",\r\n    \"descricao\": \"Todos os dias às 5h da manhã\",\r\n    \"status\": \"pendente\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/tarefas",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["tarefas"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Tarefas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/tarefas",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["tarefas"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Detalhes Tarefa",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/tarefas/644694eb4d50183c141083ee",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["tarefas", "644694eb4d50183c141083ee"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Editar Tarefa",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"titulo\": \"Passear com meu gato\",\r\n    \"descricao\": \"Ir na praça\",\r\n    \"status\": \"finalizada\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/tarefas/644694d14d50183c141083ec",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["tarefas", "644694d14d50183c141083ec"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Remover Tarefa",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/tarefas/6446b538b4ed86942d6d13fe",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["tarefas", "6446b538b4ed86942d6d13fe"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
