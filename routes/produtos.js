@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { Produto, customJoi } = require("../models/produto");
+const { Produto, createJoi, updateJoi } = require("../models/produto");
 const path = require("path");
 
 const router = Router();
@@ -20,19 +20,10 @@ const upload = multer({ storage: storage });
 //Create
 router.post("/produtos", upload.single("imagem"), async (req, res) => {
   try {
-    const { error } = customJoi.validate(req.body);
+    const { error } = createJoi.validate(req.body);
     if (error) {
       res.status(400).json({ message: error.message });
     } else {
-      const {
-        nome,
-        descricao,
-        quantidade,
-        preco,
-        desconto,
-        dataDesconto,
-        categoria,
-      } = req.body;
       const produto = new Produto({
         nome,
         descricao,
@@ -77,10 +68,74 @@ router.get("/produtos/:id", async (req, res) => {
   }
 });
 
+//Read by NOME
+router.get("/buscanome", async (req, res) => {
+  try {
+    let { nome } = req.query;
+    const produto = await Produto.findOne({
+      nome: nome,
+    }).collation({ locale: "pt", strength: 1 });
+    const listaProdutos = await Produto.find();
+    if (produto && nome) {
+      res.status(200).json(produto);
+    } else
+      res
+        .status(404)
+        .json({ message: "Produto não encontrado", produtos: listaProdutos });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+//READ BY CATEGORIA
+router.get("/buscacategoria", async (req, res) => {
+  try {
+    let { categoria } = req.query;
+    const produto = await Produto.findOne({ categoria: categoria }).collation({
+      locale: "pt",
+      strength: 1,
+    });
+    const listaProdutos = await Produto.find();
+    if (produto && categoria) {
+      res.status(200).json(produto);
+    } else
+      res.status(404).json({
+        message:
+          "Produto nesta categoria não encontrado ou categoria inexistente",
+        produtos: listaProdutos,
+      });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// READ BY QUANTIDADE
+router.get("/buscaquantidade", async (req, res) => {
+  try {
+    let { quantidade } = req.query;
+    const produto = await Produto.findOne({ quantidade: quantidade }).exec();
+    const listaProdutos = await Produto.find();
+    if (produto && produto.quantidade === 0) {
+      res.status(200).json({
+        message: "Os seguintes produtos estão com o estoque zerado",
+        produtos: produto,
+      });
+    } else if (produto) {
+      res.status(200).json(produto);
+    } else
+      res.status(404).json({
+        message: "Produto com esta quantidade não encontrado",
+        produtos: listaProdutos,
+      });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 //Update
 router.put("/produtos/:id", async (req, res) => {
   try {
-    const { error } = customJoi.validate(req.body);
+    const { error } = updateJoi.validate(req.body);
     if (error) {
       res.status(400).json({ message: error.message });
     } else {

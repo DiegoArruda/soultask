@@ -36,14 +36,14 @@ const Produto = model(
   })
 );
 
-const customJoi = Joi.object({
+const createJoi = Joi.object({
   nome: Joi.string().required().messages({
     message: "Formato incorreto",
   }),
   descricao: Joi.string().required().messages({
     message: "Formato incorreto",
   }),
-  quantidade: Joi.number().integer().positive().required().messages({
+  quantidade: Joi.number().integer().min(0).required().messages({
     message: "Formato incorreto",
   }),
   preco: Joi.number().required().positive().messages({
@@ -51,13 +51,34 @@ const customJoi = Joi.object({
   }),
   desconto: Joi.number().positive(),
   dataDesconto: Joi.date().min("now"),
-  categoria: Joi.string().required().messages({
+  categoria: Joi.string().messages({
     message: "Formato incorreto",
   }),
   imagem: Joi.string(),
 });
 
-module.exports = { customJoi, Produto };
+const updateJoi = Joi.object({
+  nome: Joi.string().messages({
+    message: "Formato incorreto",
+  }),
+  descricao: Joi.string().messages({
+    message: "Formato incorreto",
+  }),
+  quantidade: Joi.number().integer().min(0).messages({
+    message: "Formato incorreto",
+  }),
+  preco: Joi.number().required().messages({
+    message: "Formato incorreto",
+  }),
+  desconto: Joi.number().positive(),
+  dataDesconto: Joi.date().min("now"),
+  categoria: Joi.string().messages({
+    message: "Formato incorreto",
+  }),
+  imagem: Joi.string(),
+});
+
+module.exports = { createJoi, updateJoi, Produto };
 /* nome, descrição, quantidade, preço, desconto, dataDesconto, categoria, imagem do produto */
 
 //usar binary(não usar schema em post e put )
