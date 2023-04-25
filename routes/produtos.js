@@ -20,6 +20,15 @@ const upload = multer({ storage: storage });
 //Create
 router.post("/produtos", upload.single("imagem"), async (req, res) => {
   try {
+    const {
+      nome,
+      descricao,
+      quantidade,
+      preco,
+      desconto,
+      dataDesconto,
+      categoria,
+    } = req.body;
     const { error } = createJoi.validate(req.body);
     if (error) {
       res.status(400).json({ message: error.message });
@@ -40,6 +49,7 @@ router.post("/produtos", upload.single("imagem"), async (req, res) => {
         .json({ message: "Produto criado com sucesso", produto: produto });
     }
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -133,31 +143,37 @@ router.get("/buscaquantidade", async (req, res) => {
 });
 
 //Update
-router.put("/produtos/:id", async (req, res) => {
+router.put("/produtos/:id", upload.single("imagem"), async (req, res) => {
   try {
+    const {
+      nome,
+      descricao,
+      quantidade,
+      preco,
+      desconto,
+      dataDesconto,
+      categoria,
+    } = req.body;
+    console.log(req.body);
     const { error } = updateJoi.validate(req.body);
     if (error) {
       res.status(400).json({ message: error.message });
     } else {
       const { id } = req.params;
-      const {
-        nome,
-        descricao,
-        quantidade,
-        preco,
-        desconto,
-        dataDesconto,
-        categoria,
-      } = req.body;
-      const produtoAtt = await Produto.findByIdAndUpdate(id, {
-        nome,
-        descricao,
-        quantidade,
-        preco,
-        desconto,
-        dataDesconto,
-        categoria,
-      });
+      const produtoAtt = await Produto.findByIdAndUpdate(
+        id,
+        {
+          nome,
+          descricao,
+          quantidade,
+          preco,
+          desconto,
+          dataDesconto,
+          categoria,
+          imagem: req.file?.filename,
+        },
+        { new: true }
+      );
       const listaProdutos = await Produto.find();
       if (produtoAtt) {
         res.status(200).json({
