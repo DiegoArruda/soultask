@@ -24,14 +24,15 @@ router.get("/tarefas", async (req, res) => {
 //Read ID
 router.get("/tarefas/:id", async (req, res) => {
   try {
-    const { id } = req.params.id;
+    const { id } = req.params;
     const tarefa = await Tarefa.findById(id);
     if (tarefa) {
-      res.status.json(tarefa);
+      res.json(tarefa);
     } else
-      res
-        .status(404)
-        .json({ message: "Tarefa não encontrada", tarefas: Tarefa.find() });
+      res.status(404).json({
+        message: "Tarefa não encontrada",
+        tarefas: await Tarefa.find(),
+      });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Um erro aconteceu." });
@@ -51,11 +52,12 @@ router.put("/tarefas/:id", async (req, res) => {
     if (tarefaExistente) {
       res
         .status(200)
-        .json({ message: "Tarefa atualizada", tarefa: tarefaExistente });
+        .json({ message: "Tarefa atualizada", tarefa: await tarefaExistente });
     } else
-      res
-        .status(404)
-        .json({ message: "Tarefa não encontrada", tarefas: Tarefa.find() });
+      res.status(404).json({
+        message: "Tarefa não encontrada",
+        tarefas: await Tarefa.find(),
+      });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err.message });
