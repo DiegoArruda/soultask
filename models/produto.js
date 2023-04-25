@@ -67,7 +67,7 @@ const updateJoi = Joi.object({
   quantidade: Joi.number().integer().min(0).messages({
     message: "Formato incorreto",
   }),
-  preco: Joi.number().required().messages({
+  preco: Joi.number().messages({
     message: "Formato incorreto",
   }),
   desconto: Joi.number().positive(),
