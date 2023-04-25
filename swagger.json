@@ -1,0 +1,285 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Produtos",
+    "description": "API usada pra estudos do mongoDB",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/produtos": {
+      "post": {
+        "description": "Cria um produto no banco de dados",
+        "summary": "Adição de um produto",
+        "tags": ["Produtos"],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "nome": "Cebola",
+                  "descricao": "Os ogros são como cebolas",
+                  "quantidade": 10,
+                  "preco": 1,
+                  "desconto": "null",
+                  "dataDevolucao": "null",
+                  "imagem": "cebola.jpg"
+                },
+                "properties": {
+                  "nome": { "type": "string" },
+                  "descricao": { "type": "string" },
+                  "quantidade": { "type": "integer" },
+                  "preco": { "type": "integer" },
+                  "desconto": { "type": "integer" },
+                  "dataDesconto": { "type": "string" },
+                  "categoria": { "type": "string" },
+                  "imagem": {
+                    "type": "string",
+                    "description": "A imagem será uma imagem real que será convertida em uma string no banco de dados"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Dados Inválidos."
+          },
+          "200": {
+            "description": "Produto Cadastrado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Produto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Listagem de produtos",
+        "description": "Listagem de produtos",
+        "tags": ["Produtos"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Produto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/produtos/{id}": {
+      "get": {
+        "summary": "Busca produtos por ID",
+        "description": "Acha um produto específico com um ID",
+        "tags": ["Produtos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Produto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar Produto",
+        "description": "Atualiza o produto no banco de dados",
+        "tags": ["Produtos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Produto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Produto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Um erro ocorreu"
+          },
+          "404": {
+            "description": "Produto não encontrado"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Excluir Produto",
+        "description": "Exclui um produto do banco de dados utilizando o ID",
+        "tags": ["Produtos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto encontrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Produto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Um erro ocorreu"
+          },
+          "404": {
+            "description": "Produto não encontrado"
+          }
+        }
+      }
+    },
+    "/buscanome": {
+      "get": {
+        "summary": "Busca de nome",
+        "description": "Busca o nome do produto (case insensitive)",
+        "tags": ["Produtos"],
+        "parameters": [
+          {
+            "name": "nome",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto achado com sucesso"
+          },
+          "404": {
+            "description": "Produto com este nome não encontrado"
+          },
+          "500": {
+            "description": "Erro desconhecido"
+          }
+        }
+      }
+    },
+    "/buscacategoria": {
+      "get": {
+        "summary": "Busca por Categoria",
+        "description": "Busca um produto que se enquadra numa categoria específica. (case insensitive)",
+        "tags": ["Produtos"],
+        "parameters": [
+          {
+            "name": "categoria",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto achado com sucesso"
+          },
+          "404": {
+            "description": "Produto não encontrado com esta categoria"
+          },
+          "500": {
+            "description": "Erro desconhecido"
+          }
+        }
+      }
+    },
+    "/buscaquantidade": {
+      "get": {
+        "summary": "Busca por quantidade",
+        "description": "Busca por quantidade específica de um produto. Quantidade deve ser um numeral",
+        "tags": ["Produtos"],
+        "parameters": [
+          {
+            "name": "quantidade",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto achado com sucesso"
+          },
+          "404": {
+            "description": "Produto com esta quantidade não encontrado"
+          },
+          "500": {
+            "description": "Erro desconhecido"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Produto": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" },
+          "descricao": { "type": "string" },
+          "quantidade": { "type": "integer" },
+          "preco": { "type": "integer" },
+          "desconto": { "type": "integer" },
+          "dataDesconto": { "type": "string" },
+          "categoria": { "type": "string" },
+          "imagem": {
+            "type": "string",
+            "description": "A imagem será uma imagem real que será convertida em uma string no banco de dados"
+          }
+        }
+      }
+    }
+  }
+}
