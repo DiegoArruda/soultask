@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const Produto = require("../models/produto");
+const { Produto, customJoi } = require("../models/produto");
 const path = require("path");
 
 const router = Router();
@@ -20,29 +20,34 @@ const upload = multer({ storage: storage });
 //Create
 router.post("/produtos", upload.single("imagem"), async (req, res) => {
   try {
-    const {
-      nome,
-      descricao,
-      quantidade,
-      preco,
-      desconto,
-      dataDesconto,
-      categoria,
-    } = req.body;
-    const produto = new Produto({
-      nome,
-      descricao,
-      quantidade,
-      preco,
-      desconto,
-      dataDesconto,
-      categoria,
-      imagem: req.file.filename,
-    });
-    await produto.save();
-    res
-      .status(201)
-      .json({ message: "Produto criado com sucesso", produto: produto });
+    const { error } = customJoi.validate(req.body);
+    if (error) {
+      res.status(400).json({ message: error.message });
+    } else {
+      const {
+        nome,
+        descricao,
+        quantidade,
+        preco,
+        desconto,
+        dataDesconto,
+        categoria,
+      } = req.body;
+      const produto = new Produto({
+        nome,
+        descricao,
+        quantidade,
+        preco,
+        desconto,
+        dataDesconto,
+        categoria,
+        imagem: req.file.filename,
+      });
+      await produto.save();
+      res
+        .status(201)
+        .json({ message: "Produto criado com sucesso", produto: produto });
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -75,36 +80,41 @@ router.get("/produtos/:id", async (req, res) => {
 //Update
 router.put("/produtos/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const {
-      nome,
-      descricao,
-      quantidade,
-      preco,
-      desconto,
-      dataDesconto,
-      categoria,
-    } = req.body;
-    const produtoAtt = await Produto.findByIdAndUpdate(id, {
-      nome,
-      descricao,
-      quantidade,
-      preco,
-      desconto,
-      dataDesconto,
-      categoria,
-    });
-    const listaProdutos = await Produto.find();
-    if (produtoAtt) {
-      res.status(200).json({
-        message: "Produto atualizado",
-        produto: produtoAtt,
+    const { error } = customJoi.validate(req.body);
+    if (error) {
+      res.status(400).json({ message: error.message });
+    } else {
+      const { id } = req.params;
+      const {
+        nome,
+        descricao,
+        quantidade,
+        preco,
+        desconto,
+        dataDesconto,
+        categoria,
+      } = req.body;
+      const produtoAtt = await Produto.findByIdAndUpdate(id, {
+        nome,
+        descricao,
+        quantidade,
+        preco,
+        desconto,
+        dataDesconto,
+        categoria,
       });
-    } else
-      res.status(404).json({
-        message: "Produto não encontrado",
-        produtos: listaProdutos,
-      });
+      const listaProdutos = await Produto.find();
+      if (produtoAtt) {
+        res.status(200).json({
+          message: "Produto atualizado",
+          produto: produtoAtt,
+        });
+      } else
+        res.status(404).json({
+          message: "Produto não encontrado",
+          produtos: listaProdutos,
+        });
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
